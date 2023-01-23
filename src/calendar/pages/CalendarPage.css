@@ -1,0 +1,41 @@
+
+.rbc-button-link, .rbc-label {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.rbc-btn-group button {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+
+.rbc-header {
+  color: #fff;
+}
+
+.rbc-toolbar button:active, .rbc-toolbar button.rbc-active {
+  background-color: #16a3b7;
+  color: black;
+} 
+
+.rbc-toolbar .rbc-toolbar-label {
+  color: #16a3b7;
+  font-weight: 600;
+  font-size: 1.5rem;
+}
+
+.rbc-off-range-bg {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.rbc-today .rbc-button-link {
+  color: #16a3b7;
+  font-weight: 600;
+}
+
+.rbc-today {
+  background-color: #16a4b777;
+}
+
+.rbc-agenda-event-cell, .rbc-agenda-time-cell, .rbc-agenda-date-cell {
+  color: rgba(255, 255, 255, 0.5);
+}
