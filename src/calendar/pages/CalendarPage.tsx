@@ -1,6 +1,6 @@
-import { CalendarEventBox, CalendarModal, NavBar } from "../"
+import { CalendarEventBox, CalendarModal, FabAddEvent, NavBar } from "../"
 
-import { Calendar } from 'react-big-calendar'
+import { Calendar, View, Views } from 'react-big-calendar'
 import { addHours } from "date-fns"
 
 import 'react-big-calendar/lib/css/react-big-calendar.css'
@@ -8,19 +8,13 @@ import './CalendarPage.css'
 import { getMessagesES, localizer } from "../../helpers"
 import { calendarEvent } from "../../interfaces/CalendarEvent"
 import { useState } from "react"
-
-const events = [{
-  title: 'Test event',
-  notes: 'This is a test event',
-  start: new Date(),
-  end: addHours( new Date(), 2),
-  user: {
-    name: 'Gandhi',
-    id: 1
-  }
-}]
+import { useUiStore } from "../../hooks"
+import { useCalendarStore } from "../../hooks/useCalendarStore"
 
 export const CalendarPage = () => {
+
+  const { openDateModal } = useUiStore()
+  const { events, setActiveEvent } = useCalendarStore()
 
   const [lastView, setLastView] = useState(localStorage.getItem('lastView') || 'week')
 
@@ -31,32 +25,35 @@ export const CalendarPage = () => {
       borderRadius: '0px',
     }
 
+    Views
+
     return {
       style
     }
   }
 
-  const onDoubleClick = (event) => {
-    console.log('double', event)
+  const onDoubleClick = () => {
+    openDateModal()
   }
 
-  const onSelect = (event) => {
-    console.log('select', event)
+  const onSelect = (event: calendarEvent) => {
+    setActiveEvent(event)
   }
 
   const onViewChange = (event: string) => {
     console.log(event)
     localStorage.setItem('lastView', event)
   }
+
   return (
     <div>
       <NavBar />
 
       <Calendar
         culture='es'
-        messages={getMessagesES()}
+        messages={ getMessagesES() }
         localizer={localizer}
-        defaultView={ lastView }
+        defaultView={ lastView as View }
         events={events}
         startAccessor="start"
         endAccessor="end"
@@ -71,6 +68,8 @@ export const CalendarPage = () => {
       />
 
       <CalendarModal />
+
+      <FabAddEvent />
     </div>
   )
 }

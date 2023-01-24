@@ -43,3 +43,34 @@ body {
   outline: none;
   padding: 10px;
 }
+
+.fab {
+  border-radius: 100%;
+  bottom: 25px;
+  right: 25px;
+  position: absolute;
+  width: 50px;
+  height: 50px;
+}
+
+.fab-delete {
+  left: 25px;
+}
+
+.fab-add {
+  background-color: #16a3b7;
+  border-color: #16a3b7;
+}
+
+
+.fab-add:hover {
+  background-color: #12555d;
+  border-color: #12555d;
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: center;
+}

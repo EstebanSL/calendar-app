@@ -1,5 +1,5 @@
 import { addHours, differenceInSeconds } from 'date-fns';
-import { ChangeEvent, FormEvent, HTMLAttributeAnchorTarget, useMemo, useState } from 'react';
+import { ChangeEvent, FormEvent, HTMLAttributeAnchorTarget, useEffect, useMemo, useState } from 'react';
 import Modal from 'react-modal';
 import DatePicker, { registerLocale } from "react-datepicker";
 import es from 'date-fns/locale/es';
@@ -7,6 +7,8 @@ import es from 'date-fns/locale/es';
 
 import "react-datepicker/dist/react-datepicker.css";
 import Swal from 'sweetalert2';
+
+import { useCalendarStore, useUiStore } from '../../hooks';
 
 
 Modal.setAppElement('#root');
@@ -33,6 +35,9 @@ interface formValues {
 
 export const CalendarModal = () => {
 
+  const { isDateModalOpen, closeDateModal } = useUiStore()
+
+  const { activeEvent, startSavingEvent, startDeletingEvent } = useCalendarStore()
 
   const [formValues, setFormValues] = useState<formValues>({
     title: 'Gandhi',
@@ -41,7 +46,11 @@ export const CalendarModal = () => {
     end: addHours(new Date(), 2)
   })
 
-  const [modalIsOpen, setIsOpen] = useState(true);
+  const handleClickDelete = () => {
+    startDeletingEvent(activeEvent)
+    closeDateModal()
+  }
+
   const [formSubmitted, setformSubmitted] = useState<boolean>(false);
 
   const onInputChange = (event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) => {
@@ -52,11 +61,21 @@ export const CalendarModal = () => {
   }
 
   const titleClass = useMemo(() => {
-    if(!formSubmitted) {
+    if (!formSubmitted) {
       return ''
     }
-    return formValues.title.length > 0 ? '': 'is-invalid'
+    return formValues.title.length > 0 ? '' : 'is-invalid'
   }, [formValues.title, formSubmitted])
+
+
+  useEffect(() => {
+    if (activeEvent !== null) {
+      setFormValues({ ...activeEvent })
+      setformSubmitted(false)
+    }
+
+
+  }, [activeEvent])
 
 
   const onDateChange = (event: Date, type: 'start' | 'end') => {
@@ -66,19 +85,16 @@ export const CalendarModal = () => {
     })
   }
 
-  function openModal() {
-    setIsOpen(true);
-  }
-
   function onCloseModal() {
-    setIsOpen(false);
+    closeDateModal()
   }
 
-  const onSubmit = (event: FormEvent) => {
+  const onSubmit = async (event: FormEvent) => {
     event.preventDefault();
     setformSubmitted(true)
     if (isValidForm()) {
-      console.log('submited')
+      await startSavingEvent(formValues)
+      closeDateModal()
     }
     return
   }
@@ -106,7 +122,7 @@ export const CalendarModal = () => {
 
   return (
     <Modal
-      isOpen={modalIsOpen}
+      isOpen={isDateModalOpen}
       onRequestClose={onCloseModal}
       style={customStyles}
       className='modal'
@@ -166,13 +182,20 @@ export const CalendarModal = () => {
           <small id="emailHelp" className="form-text text-muted">Información adicional</small>
         </div>
 
-        <button
-          type="submit"
-          className="btn btn-outline-primary btn-block"
-        >
-          <i className="far fa-save"></i>
-          <span> Guardar</span>
-        </button>
+        <div className="buttons">
+          <button
+            type="submit"
+            className="btn btn-outline-primary"
+          >
+            <i className="far fa-save"></i>
+            <span> Guardar</span>
+          </button>
+
+          <button className='btn btn-outline-danger' type='button' onClick={handleClickDelete}>
+            <i className="fa-solid fa-trash"></i>
+            <span> Eliminar</span>
+          </button>
+        </div>
 
       </form>
     </Modal>

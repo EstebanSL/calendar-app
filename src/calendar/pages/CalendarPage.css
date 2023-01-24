@@ -39,3 +39,7 @@
 .rbc-agenda-event-cell, .rbc-agenda-time-cell, .rbc-agenda-date-cell {
   color: rgba(255, 255, 255, 0.5);
 }
+
+.rbc-agenda-empty {
+  color: #fff;
+}

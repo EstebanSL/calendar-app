@@ -1,4 +1,6 @@
-export const getMessagesES = () => {
+import { Messages } from "react-big-calendar";
+
+export const getMessagesES = (): Messages => {
   return {
     allDay: 'Todo el día',
     previous: '<',
@@ -12,6 +14,6 @@ export const getMessagesES = () => {
     time: 'Hora',
     event: 'Evento',
     noEventsInRange: 'No hay eventos en este rango',
-    showMore: (total: string) => `+ Ver más (${total})`
+    showMore: (total: number) => `+ Ver más (${total})`
   };
 }
