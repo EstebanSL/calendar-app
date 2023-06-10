@@ -1,13 +1,14 @@
-import { useForm } from 'react-hook-form';
-import './LoginPage.css';
+import { useNavigate } from 'react-router-dom';
+import './RegisterPage.css';
 import { useUserStore } from '../../hooks/useUserStore';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { AuthResponse } from '@supabase/supabase-js';
 import { supabase } from '../../services/supabaseClient';
-import { AuthTokenResponse } from '@supabase/supabase-js';
-import { useNavigate } from 'react-router-dom';
+import { getErrorMessage } from '../../utils/errorMessageHelper';
 import { errorAlert, successAlert } from '../../utils/alerts';
 
-export const LoginPage = () => {
+export const RegisterPage = () => {
   const navigate = useNavigate();
   const { setUserInformation } = useUserStore();
   const [loading, setLoading] = useState(false);
@@ -22,32 +23,29 @@ export const LoginPage = () => {
     setLoading(true);
     console.log(authData);
 
-    const { data, error }: AuthTokenResponse =
-      await supabase.auth.signInWithPassword(authData);
-
-    console.log(data, error);
+    const { data, error }: AuthResponse = await supabase.auth.signUp(authData);
 
     if (error) {
-      errorAlert('Error', error.message)
+      errorAlert(error.name, error.message)
     } else {
       setUserInformation(data);
-      successAlert('Welcome', 'Signed in successfully')
+      successAlert('Welcome', 'Registered and Signed in successfully')
     }
     setLoading(false);
   };
 
-  const goToRegister = () => {
-    navigate('/auth/register');
+  const goToLogin = () => {
+    navigate('/auth/login');
   };
 
   return (
-    <div className="login-container">
-      <div className="login-container__image"></div>
-      <h1 className="login-container__title">Calendar App</h1>
-      <div className="col-md-6 login-form-1 login-formCont">
-        <h3 className="login-container__subtitle">Sign In</h3>
+    <div className="register-container">
+      <div className="register-container__image"></div>
+      <h1 className="register-container__title">Calendar App</h1>
+      <div className="col-md-6 register-form-1 register-formCont">
+        <h3 className="register-container__subtitle">Sign Up</h3>
         <form
-          className="login-container__form"
+          className="register-container__form"
           onSubmit={handleSubmit(onSubmit)}
         >
           <div className="form-group mb-2">
@@ -63,10 +61,8 @@ export const LoginPage = () => {
               })}
             />
             {errors.email && (
-              <p className="text-danger mt-1 mb-4">
-                {errors.email.message?.toString()}
-              </p>
-            )}
+              <p className="text-danger mt-1 mb-4">{errors.email.message?.toString()}</p>
+              )}
           </div>
           <div className="form-group mb-2">
             <input
@@ -85,19 +81,15 @@ export const LoginPage = () => {
               })}
             />
             {errors.password && (
-              <p className="text-danger mt-1 mb-4">
-                {errors.password.message?.toString()}
-              </p>
+              <p className="text-danger mt-1 mb-4">{errors.password.message?.toString()}</p>
             )}
           </div>
           <div className="form-group text-center mt-4">
-            <input type="submit" className="btnSubmit" value="Login" />
+            <input type="submit" className="btnSubmit" value="Register" />
           </div>
         </form>
 
-        <p className='login-formCont__link' onClick={() => goToRegister()}>
-          Don´t have an account? Create an account here
-        </p>
+        <p className='register-formCont__link' onClick={() => goToLogin()}>Already have an account? Sign in here</p>
       </div>
     </div>
   );

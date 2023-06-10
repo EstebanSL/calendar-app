@@ -1,19 +1,23 @@
 import { Navigate, Route, Routes } from "react-router"
 import { LoginPage } from "../auth"
 import { CalendarPage } from "../calendar"
+import { PublicRouter } from "./PublicRouter"
+import { useUserStore } from "../hooks/useUserStore"
+import { useSelector } from "react-redux"
 
 export const AppRouter = () => {
 
-  const authState: string = 'authenticated'
+  const { userInformation } = useSelector((state: any) => state.user)
+  
   return (
     <Routes>
       {
-        authState === 'non-authenticated'
-          ? <Route path="auth/*" element={<LoginPage />} />
+        userInformation === null
+          ? <Route path="auth/*" element={<PublicRouter />} />
           : <Route path="/*" element={<CalendarPage />} />
       }
 
-      <Route path="/*" element={ <Navigate to="/auth/Login" />} />
+      <Route path="/*" element={ <Navigate to="/auth/login" />} />
 
     </Routes>
   )

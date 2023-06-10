@@ -1,4 +1,4 @@
-.login-container {
+.register-container {
   width: 100%;
   min-height: 100vh;
   display: flex;
@@ -8,17 +8,17 @@
   padding: 1rem;
 }
 
-.login-container__title {
+.register-container__title {
   color: white;
   margin-bottom: 2rem;
 }
 
-.login-container__subtitle {
+.register-container__subtitle {
   color: white;
   margin-top: 1rem;
 }
 
-.login-container__image {
+.register-container__image {
   position: absolute;
   background-image: url('/src/assets/bg-page.jpg');
   filter: blur(2px);
@@ -28,23 +28,24 @@
   z-index: -1;
 }
 
-.login-formCont {
+.register-formCont {
   border-radius: 5px;
   padding: 1rem;
-  background-color: #272727;
+  background-color: #16a3b7;
   box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2), 0 9px 26px 0 rgba(0, 0, 0, 0.19);
 }
 
-.login-formCont__link {
+.register-formCont__link {
   color: white;
   cursor: pointer;
-  text-align: end;
+  text-align: start;
 }
-.login-formCont__link p:hover {
+
+.register-formCont__link:hover {
   text-decoration: underline;
 }
 
-.login-form-1 h3 {
+.register-form-1 h3 {
   text-align: center;
   color: #fff;
 }
@@ -57,20 +58,20 @@
   cursor: pointer;
 }
 
-.login-form-1 .btnSubmit {
+.register-form-1 .btnSubmit {
   color: #fff;
-  background-color: #16a3b7;
+  background-color: #272727;
 }
 
-.login-form-1 .btnSubmit:hover {
-  background-color: #107987;
+.register-form-1 .btnSubmit:hover {
+  background-color: #272727c3;
 }
 
-.login-form-1 .btnSubmit:active {
-  background-color: #0d6570;
+.register-form-1 .btnSubmit:active {
+  background-color: #272727c3;
 }
 
-.login-form-1 .ForgetPwd {
+.register-form-1 .ForgetPwd {
   color: #0062cc;
   font-weight: 600;
   text-decoration: none;
