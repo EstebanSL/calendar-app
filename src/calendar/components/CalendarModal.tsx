@@ -2,7 +2,6 @@ import { addHours, differenceInSeconds } from 'date-fns';
 import {
   ChangeEvent,
   FormEvent,
-  HTMLAttributeAnchorTarget,
   useEffect,
   useMemo,
   useState,
@@ -40,9 +39,10 @@ interface formValues {
 }
 
 export const CalendarModal = () => {
-  const { isDateModalOpen, closeDateModal } = useUiStore();
 
-  const { user } = useSelector((state: any) => state.user);
+  //VARIABLES
+  const { isDateModalOpen, closeDateModal } = useUiStore();
+  const [formSubmitted, setformSubmitted] = useState<boolean>(false);
 
   const {
     activeEvent,
@@ -52,22 +52,32 @@ export const CalendarModal = () => {
   } = useCalendarStore();
 
   const [formValues, setFormValues] = useState<formValues>({
-    title: 'Gandhi',
-    notes: 'This is a test note form',
+    title: '',
+    notes: '',
     start: new Date(),
     end: addHours(new Date(), 2),
   });
 
-  const handleClickDelete = () => {
+  //VARIABLES
+
+  /**
+   * [handleClickDelete]
+   * @returns {void}
+   */
+  const handleClickDelete = (): void => {
     startDeletingEvent(activeEvent);
     closeDateModal();
   };
 
-  const [formSubmitted, setformSubmitted] = useState<boolean>(false);
 
+  /**
+   * [onInputChange]
+   * @param {ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>} event
+   * @retirns void
+   */
   const onInputChange = (
     event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>
-  ) => {
+  ): void => {
     setFormValues({
       ...formValues,
       [event.target.name]: event.target.value,
@@ -81,13 +91,11 @@ export const CalendarModal = () => {
     return formValues.title.length > 0 ? '' : 'is-invalid';
   }, [formValues.title, formSubmitted]);
 
-  useEffect(() => {
-    if (activeEvent !== null) {
-      setFormValues({ ...activeEvent });
-      setformSubmitted(false);
-    }
-  }, [activeEvent]);
-
+  /**
+   * [onDateChange]
+   * @param {Date} event
+   * @param {'start' | 'end'} type 
+   */
   const onDateChange = (event: Date, type: 'start' | 'end') => {
     setFormValues({
       ...formValues,
@@ -95,11 +103,20 @@ export const CalendarModal = () => {
     });
   };
 
-  function onCloseModal() {
+  /**
+   * [onCloseModal]
+   * @returns {void}
+   */
+  function onCloseModal(): void {
     closeDateModal();
   }
 
-  const onSubmit = async (event: FormEvent) => {
+  /**
+   * [onSubmit]
+   * @param {FormEvent} event 
+   * @returns {Promise<void>}
+   */
+  const onSubmit = async (event: FormEvent): Promise<void> => {
     event.preventDefault();
     setformSubmitted(true);
     if (isValidForm()) {
@@ -114,23 +131,28 @@ export const CalendarModal = () => {
     return;
   };
 
-  const isValidForm = () => {
+  /**
+   * [isValidForm]
+   * @description Check the form inputs and returns the validation result
+   * @returns {boolean}
+   */
+  const isValidForm = (): boolean => {
     const dateDifference: number = differenceInSeconds(
       formValues.end,
       formValues.start
     );
     if (isNaN(dateDifference) || dateDifference <= 0) {
       Swal.fire({
-        title: 'Error de fechas',
-        text: 'Las fechas son incorrectas',
+        title: 'Dates error',
+        text: 'Initial date must be before end date',
         icon: 'error',
       });
       return false;
     }
     if (formValues.title.length === 0) {
       Swal.fire({
-        title: 'Error de información',
-        text: 'Debe ingresar al menos un título',
+        title: 'Field error',
+        text: 'Title must be provided',
         icon: 'error',
       });
       return false;
@@ -138,6 +160,15 @@ export const CalendarModal = () => {
     return true;
   };
 
+  useEffect(() => {
+    if (activeEvent !== null) {
+      setFormValues({ ...activeEvent });
+      setformSubmitted(false);
+    }
+  }, [activeEvent]);
+
+
+  //TEMPLATE
   return (
     <Modal
       isOpen={isDateModalOpen}

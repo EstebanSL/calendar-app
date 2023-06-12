@@ -3,8 +3,10 @@ import { deleteUserData, setUserData } from '../store'
 
 export const useUserStore = () => {
 
+  //VARIABLES
   const dispatch = useDispatch()
 
+  //EVENTS
   const setUserInformation = (data: any) => {
     dispatch(setUserData(data))
   }

@@ -4,7 +4,7 @@ import { CalendarPage } from '../calendar';
 import { RegisterPage } from '../auth/pages/RegisterPage';
 
 export const PublicRouter = () => {
-  const authState: string = 'non-authenticated';
+
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />

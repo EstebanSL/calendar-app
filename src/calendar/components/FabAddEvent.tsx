@@ -5,11 +5,18 @@ import { useSelector } from 'react-redux'
 
 export const FabAddEvent = () => {
 
+  //VARIABLES
   const { openDateModal } = useUiStore()
   const { setActiveEvent } = useCalendarStore()
   const { userInformation } = useSelector((state: any) => state.user)
   
-  const handleClickNew = () => {
+  //FUNCTIONS
+
+  /**
+   * [handleClickNew]
+   * @returns {void}
+   */
+  const handleClickNew = (): void => {
     setActiveEvent({
       title: '',
       notes: '',
@@ -20,6 +27,7 @@ export const FabAddEvent = () => {
     openDateModal()
   }
 
+  //TEMPLATE
   return (
     <button className='btn btn-primary fab fab-add z-3' type='button' onClick={ handleClickNew }>
       <i className="fa-solid fa-plus"></i>

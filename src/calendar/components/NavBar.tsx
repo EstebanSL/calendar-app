@@ -1,12 +1,19 @@
 import { useUserStore } from '../../hooks/useUserStore';
 
 export const NavBar = () => {
+  //VARIABLES
   const { clearUserInformation } = useUserStore();
 
-  const logOut = () => {
+  //FUNCTIONS
+  /**
+   * [logOut]
+   * @returns {void}
+   */
+  const logOut = (): void => {
     clearUserInformation();
   };
 
+  //TEMPLATE
   return (
     <div className="navbar navbar-light bg-info mb-4 px-4">
       <span className="navbar-brand">

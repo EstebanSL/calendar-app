@@ -7,8 +7,10 @@ import { useSelector } from "react-redux"
 
 export const AppRouter = () => {
 
+  //VARIABLES
   const { userInformation } = useSelector((state: any) => state.user)
   
+  //TEMPLATE
   return (
     <Routes>
       {

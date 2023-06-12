@@ -1,7 +1,6 @@
 import { CalendarEventBox, CalendarModal, FabAddEvent, NavBar } from "../"
 
 import { Calendar, View, Views } from 'react-big-calendar'
-import { addHours } from "date-fns"
 
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import './CalendarPage.css'
@@ -15,39 +14,60 @@ import { useSelector } from "react-redux"
 
 export const CalendarPage = () => {
 
+  //VARIABLES
   const { openDateModal } = useUiStore()
   const { events, setActiveEvent, setAllEvents } = useCalendarStore()
   const { userInformation } = useSelector((state: any) => state.user)
 
   const [lastView, setLastView] = useState(localStorage.getItem('lastView') || 'week')
 
-  const eventStyleGetter = ( event: calendarEvent, start: Date, end: Date , isSelected: boolean ) => {
-
+  //FUNCTIONS
+  /**
+   * [eventstyleGetter]
+   * @returns {Record<string, string>}
+   */
+  const eventStyleGetter = (): Record<string, Record<string, string>> => {
     const style = {
       backgroundColor: '#347cf7',
       borderRadius: '0px',
     }
-
     Views
-
     return {
       style
     }
   }
 
+  /**
+   * [onDoubleClick]
+   * @returns {void}
+   */
   const onDoubleClick = () => {
     openDateModal()
   }
 
-  const onSelect = (event: calendarEvent) => {
+  /**
+   * [onSelect]
+   * @param {calendarEvent} event 
+   * @returns {void}
+   */
+  const onSelect = (event: calendarEvent): void => {
     setActiveEvent(event)
   }
 
-  const onViewChange = (event: string) => {
+  /**
+   * [onViewChange]
+   * @param {string} event 
+   * @returns {void}
+   */
+  const onViewChange = (event: string): void => {
     localStorage.setItem('lastView', event)
   }
 
-  const initializeEvents = async () => {
+  /**
+   * [initializeEvents]
+   * @returns {Promise<void>}
+   */
+  const initializeEvents = async (): Promise<void> => {
     
     const data = await getEvents(userInformation.user.id)
     
@@ -64,7 +84,7 @@ export const CalendarPage = () => {
         
   }, [])
   
-
+  //TEMPLATE
   return (
     <div>
       <NavBar />
