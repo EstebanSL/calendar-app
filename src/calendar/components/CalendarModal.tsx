@@ -1,19 +1,25 @@
 import { addHours, differenceInSeconds } from 'date-fns';
-import { ChangeEvent, FormEvent, HTMLAttributeAnchorTarget, useEffect, useMemo, useState } from 'react';
+import {
+  ChangeEvent,
+  FormEvent,
+  HTMLAttributeAnchorTarget,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import Modal from 'react-modal';
-import DatePicker, { registerLocale } from "react-datepicker";
+import DatePicker, { registerLocale } from 'react-datepicker';
 import es from 'date-fns/locale/es';
 
-
-import "react-datepicker/dist/react-datepicker.css";
+import 'react-datepicker/dist/react-datepicker.css';
 import Swal from 'sweetalert2';
 
 import { useCalendarStore, useUiStore } from '../../hooks';
-
+import { useSelector } from 'react-redux';
 
 Modal.setAppElement('#root');
 
-registerLocale('es', es)
+registerLocale('es', es);
 
 const customStyles = {
   content: {
@@ -27,106 +33,118 @@ const customStyles = {
 };
 
 interface formValues {
-  title: string,
-  notes: string,
-  start: Date,
-  end: Date,
+  title: string;
+  notes: string;
+  start: Date;
+  end: Date;
 }
 
 export const CalendarModal = () => {
+  const { isDateModalOpen, closeDateModal } = useUiStore();
 
-  const { isDateModalOpen, closeDateModal } = useUiStore()
+  const { user } = useSelector((state: any) => state.user);
 
-  const { activeEvent, startSavingEvent, startDeletingEvent } = useCalendarStore()
+  const {
+    activeEvent,
+    startSavingEvent,
+    startDeletingEvent,
+    startUpdatingEvent,
+  } = useCalendarStore();
 
   const [formValues, setFormValues] = useState<formValues>({
     title: 'Gandhi',
     notes: 'This is a test note form',
     start: new Date(),
-    end: addHours(new Date(), 2)
-  })
+    end: addHours(new Date(), 2),
+  });
 
   const handleClickDelete = () => {
-    startDeletingEvent(activeEvent)
-    closeDateModal()
-  }
+    startDeletingEvent(activeEvent);
+    closeDateModal();
+  };
 
   const [formSubmitted, setformSubmitted] = useState<boolean>(false);
 
-  const onInputChange = (event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) => {
+  const onInputChange = (
+    event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>
+  ) => {
     setFormValues({
       ...formValues,
-      [event.target.name]: event.target.value
-    })
-  }
+      [event.target.name]: event.target.value,
+    });
+  };
 
   const titleClass = useMemo(() => {
     if (!formSubmitted) {
-      return ''
+      return '';
     }
-    return formValues.title.length > 0 ? '' : 'is-invalid'
-  }, [formValues.title, formSubmitted])
-
+    return formValues.title.length > 0 ? '' : 'is-invalid';
+  }, [formValues.title, formSubmitted]);
 
   useEffect(() => {
     if (activeEvent !== null) {
-      setFormValues({ ...activeEvent })
-      setformSubmitted(false)
+      setFormValues({ ...activeEvent });
+      setformSubmitted(false);
     }
-
-
-  }, [activeEvent])
-
+  }, [activeEvent]);
 
   const onDateChange = (event: Date, type: 'start' | 'end') => {
     setFormValues({
       ...formValues,
-      [type]: event
-    })
-  }
+      [type]: event,
+    });
+  };
 
   function onCloseModal() {
-    closeDateModal()
+    closeDateModal();
   }
 
   const onSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    setformSubmitted(true)
+    setformSubmitted(true);
     if (isValidForm()) {
-      await startSavingEvent(formValues)
-      closeDateModal()
+      if (activeEvent.title) {
+        await startUpdatingEvent(formValues);
+      } else {
+        await startSavingEvent(formValues);
+      }
+
+      closeDateModal();
     }
-    return
-  }
+    return;
+  };
 
   const isValidForm = () => {
-    const dateDifference: number = differenceInSeconds(formValues.end, formValues.start)
-    if (isNaN(dateDifference) || (dateDifference <= 0)) {
+    const dateDifference: number = differenceInSeconds(
+      formValues.end,
+      formValues.start
+    );
+    if (isNaN(dateDifference) || dateDifference <= 0) {
       Swal.fire({
         title: 'Error de fechas',
         text: 'Las fechas son incorrectas',
-        icon: 'error'
-      })
-      return false
+        icon: 'error',
+      });
+      return false;
     }
     if (formValues.title.length === 0) {
       Swal.fire({
         title: 'Error de información',
         text: 'Debe ingresar al menos un título',
-        icon: 'error'
-      })
-      return false
+        icon: 'error',
+      });
+      return false;
     }
-    return true
-  }
+    return true;
+  };
 
   return (
     <Modal
       isOpen={isDateModalOpen}
       onRequestClose={onCloseModal}
       style={customStyles}
-      className='modal'
-      overlayClassName='modal-fondo'
+      className="modal"
+      overlayClassName="modal-fondo"
       closeTimeoutMS={200}
     >
       <h1> Nuevo evento </h1>
@@ -136,12 +154,13 @@ export const CalendarModal = () => {
           <label>Fecha y hora inicio</label>
           <DatePicker
             selected={formValues.start}
-            className='form-control'
+            className="form-control"
             onChange={(date: Date) => onDateChange(date, 'start')}
-            dateFormat='Pp'
+            dateFormat="Pp"
             showTimeSelect
-            locale='es'
-            timeCaption='Hora' />
+            locale="es"
+            timeCaption="Hora"
+          />
         </div>
 
         <div className="form-group mb-2">
@@ -149,12 +168,13 @@ export const CalendarModal = () => {
           <DatePicker
             selected={formValues.end}
             minDate={formValues.start}
-            className='form-control'
+            className="form-control"
             onChange={(date: Date) => onDateChange(date, 'end')}
-            dateFormat='Pp'
+            dateFormat="Pp"
             showTimeSelect
-            locale='es'
-            timeCaption='Hora' />
+            locale="es"
+            timeCaption="Hora"
+          />
         </div>
 
         <hr />
@@ -166,9 +186,12 @@ export const CalendarModal = () => {
             placeholder="Título del evento"
             name="title"
             autoComplete="off"
-            value={formValues.title} onChange={onInputChange}
+            value={formValues.title}
+            onChange={onInputChange}
           />
-          <small id="emailHelp" className="form-text text-muted">Una descripción corta</small>
+          <small id="emailHelp" className="form-text text-muted">
+            Una descripción corta
+          </small>
         </div>
 
         <div className="form-group mb-2">
@@ -177,27 +200,32 @@ export const CalendarModal = () => {
             placeholder="Notas"
             rows={5}
             name="notes"
-            value={formValues.notes} onChange={onInputChange}
+            value={formValues.notes}
+            onChange={onInputChange}
           ></textarea>
-          <small id="emailHelp" className="form-text text-muted">Información adicional</small>
+          <small id="emailHelp" className="form-text text-muted">
+            Información adicional
+          </small>
         </div>
 
         <div className="buttons">
-          <button
-            type="submit"
-            className="btn btn-outline-primary"
-          >
+          <button type="submit" className="btn btn-outline-primary">
             <i className="far fa-save"></i>
             <span> Guardar</span>
           </button>
 
-          <button className='btn btn-outline-danger' type='button' onClick={handleClickDelete}>
-            <i className="fa-solid fa-trash"></i>
-            <span> Eliminar</span>
-          </button>
+          {activeEvent?.title && (
+            <button
+              className="btn btn-outline-danger"
+              type="button"
+              onClick={handleClickDelete}
+            >
+              <i className="fa-solid fa-trash"></i>
+              <span> Eliminar</span>
+            </button>
+          )}
         </div>
-
       </form>
     </Modal>
-  )
-}
+  );
+};

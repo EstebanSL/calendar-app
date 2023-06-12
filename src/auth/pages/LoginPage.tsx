@@ -1,45 +1,53 @@
 import { useForm } from 'react-hook-form';
 import './LoginPage.css';
 import { useUserStore } from '../../hooks/useUserStore';
-import { useState } from 'react';
 import { supabase } from '../../services/supabaseClient';
 import { AuthTokenResponse } from '@supabase/supabase-js';
 import { useNavigate } from 'react-router-dom';
 import { errorAlert, successAlert } from '../../utils/alerts';
+import { loginData } from '../interfaces';
 
 export const LoginPage = () => {
+
+  //VARIABLES
   const navigate = useNavigate();
   const { setUserInformation } = useUserStore();
-  const [loading, setLoading] = useState(false);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm<loginData>();
 
-  const onSubmit = async (authData: any) => {
-    setLoading(true);
-    console.log(authData);
+
+  //FUNCTIONS
+
+  /**
+   * [goToRegister]
+   * @returns {Promise<void>}
+   */
+  const onSubmit = async (authData: loginData): Promise<void> => {
 
     const { data, error }: AuthTokenResponse =
       await supabase.auth.signInWithPassword(authData);
 
-    console.log(data, error);
-
     if (error) {
       errorAlert('Error', error.message)
     } else {
-      setUserInformation(data);
+      setUserInformation(data.session);
       successAlert('Welcome', 'Signed in successfully')
     }
-    setLoading(false);
   };
 
-  const goToRegister = () => {
+  /**
+   * [goToRegister]
+   * @returns {void}
+   */
+  const goToRegister = (): void => {
     navigate('/auth/register');
   };
 
+  //TEMPLATE
   return (
     <div className="login-container">
       <div className="login-container__image"></div>

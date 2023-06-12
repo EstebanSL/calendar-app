@@ -6,11 +6,13 @@ interface Props {
 }
 
 export const CalendarEventBox = ({ event }: Props) => {
+
+  console.log(event);
+  
   
   return (
     <>
       <strong>{ event.title } - </strong>
-      <span>{ event.user.name }</span>
     </>
   )
 }

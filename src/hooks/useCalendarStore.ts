@@ -1,38 +1,61 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { onAddNewEvent, onDeleteEvent, onSetActiveEvent, onUpdateEvent } from '../store';
+import {
+  onAddNewEvent,
+  onDeleteEvent,
+  onSetActiveEvent,
+  onSetEvents,
+  onUpdateEvent,
+} from '../store';
 import { calendarEvent } from '../interfaces/CalendarEvent';
-
+import { deleteEvent, saveNewEvents, updateEvent } from '../services/events.services';
 
 export const useCalendarStore = () => {
+  const dispatch = useDispatch();
 
-  const dispatch = useDispatch()
-
-  const { events, activeEvent } = useSelector((state: any) => state.calendar)
+  const { events, activeEvent } = useSelector((state: any) => state.calendar);
 
   const setActiveEvent = (calendarEvent: calendarEvent) => {
-    dispatch(onSetActiveEvent(calendarEvent))
-  }
+    dispatch(onSetActiveEvent(calendarEvent));
+  };
 
   const startSavingEvent = async (calendarEvent: calendarEvent) => {
-    if (!calendarEvent._id) {
-      dispatch(onAddNewEvent({ ...calendarEvent, _id: new Date().getTime() }))
+    try {
+      await saveNewEvents(calendarEvent);
+      dispatch(onAddNewEvent({ ...calendarEvent }));
+    } catch {
+      return;
     }
-    else {
-      dispatch(onUpdateEvent({ ...calendarEvent }))
+  };
+
+  const startUpdatingEvent = async (calendarEvent: calendarEvent) => {    
+    try {
+      await updateEvent(calendarEvent);
+      dispatch(onUpdateEvent({ ...calendarEvent }));
+    } catch {
+      return;
     }
   }
 
-  const startDeletingEvent = async ( calendarEvent: calendarEvent ) => {
-    dispatch(onDeleteEvent({ ...calendarEvent }))
-  }
+  const startDeletingEvent = async (calendarEvent: calendarEvent) => {
+    try {
+      await deleteEvent(calendarEvent);
+      dispatch(onDeleteEvent({ ...calendarEvent }));
+    } catch {
+      return;
+    }
+  };
 
-
+  const setAllEvents = async (calendarEvents: calendarEvent[]) => {
+    dispatch(onSetEvents(calendarEvents));
+  };
 
   return {
     events,
     setActiveEvent,
     activeEvent,
     startSavingEvent,
-    startDeletingEvent
-  }
-}
+    startDeletingEvent,
+    setAllEvents,
+    startUpdatingEvent
+  };
+};

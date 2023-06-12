@@ -7,14 +7,17 @@ import 'react-big-calendar/lib/css/react-big-calendar.css'
 import './CalendarPage.css'
 import { getMessagesES, localizer } from "../../helpers"
 import { calendarEvent } from "../../interfaces/CalendarEvent"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useUiStore } from "../../hooks"
 import { useCalendarStore } from "../../hooks/useCalendarStore"
+import { getEvents } from "../../services/events.services"
+import { useSelector } from "react-redux"
 
 export const CalendarPage = () => {
 
   const { openDateModal } = useUiStore()
-  const { events, setActiveEvent } = useCalendarStore()
+  const { events, setActiveEvent, setAllEvents } = useCalendarStore()
+  const { userInformation } = useSelector((state: any) => state.user)
 
   const [lastView, setLastView] = useState(localStorage.getItem('lastView') || 'week')
 
@@ -41,9 +44,26 @@ export const CalendarPage = () => {
   }
 
   const onViewChange = (event: string) => {
-    console.log(event)
     localStorage.setItem('lastView', event)
   }
+
+  const initializeEvents = async () => {
+    
+    const data = await getEvents(userInformation.user.id)
+    
+    const formattedEvents = data.map((date: any) => ({
+      ...date,
+      start: new Date(date.start),
+      end: new Date(date.end)
+    }));    
+    setAllEvents(formattedEvents)
+  }
+
+  useEffect(() => {
+    initializeEvents()
+        
+  }, [])
+  
 
   return (
     <div>
