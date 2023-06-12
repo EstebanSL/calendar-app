@@ -7,13 +7,18 @@ import {
   onUpdateEvent,
 } from '../store';
 import { calendarEvent } from '../interfaces/CalendarEvent';
-import { deleteEvent, saveNewEvents, updateEvent } from '../services/events.services';
+import {
+  deleteEvent,
+  saveNewEvents,
+  updateEvent,
+} from '../services/events.services';
 
 export const useCalendarStore = () => {
+  //VARIABLES
   const dispatch = useDispatch();
-
   const { events, activeEvent } = useSelector((state: any) => state.calendar);
 
+  //EVENTS
   const setActiveEvent = (calendarEvent: calendarEvent) => {
     dispatch(onSetActiveEvent(calendarEvent));
   };
@@ -27,14 +32,14 @@ export const useCalendarStore = () => {
     }
   };
 
-  const startUpdatingEvent = async (calendarEvent: calendarEvent) => {    
+  const startUpdatingEvent = async (calendarEvent: calendarEvent) => {
     try {
       await updateEvent(calendarEvent);
       dispatch(onUpdateEvent({ ...calendarEvent }));
     } catch {
       return;
     }
-  }
+  };
 
   const startDeletingEvent = async (calendarEvent: calendarEvent) => {
     try {
@@ -56,6 +61,6 @@ export const useCalendarStore = () => {
     startSavingEvent,
     startDeletingEvent,
     setAllEvents,
-    startUpdatingEvent
+    startUpdatingEvent,
   };
 };
